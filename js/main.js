@@ -36,7 +36,7 @@ const tableRow = items => compose(tableRowTag, tableCells)(items)
 const tableCell = tag('td')
 const tableCells = items => items.map(tableCell).join('')
 
-console.log(tag('h1')('Title'));
+// console.log(tag('h1')('Title'));
 
 let description = $('#description')
 let carbs = $('#carbs')
@@ -50,8 +50,7 @@ let list = [
 description.keypress(() => {
 
   description.removeClass('is-invalid')
-}
-)
+})
 
 calories.keypress(() => {
 
@@ -61,8 +60,7 @@ calories.keypress(() => {
 carbs.keypress(() => {
 
   carbs.removeClass('is-invalid')
-}
-)
+})
 
 protein.keypress(() => {
 
@@ -80,8 +78,6 @@ const validateInputs = () => {
     add()
   }
 
-
-
 }
 
 const add = () => {
@@ -93,7 +89,21 @@ const add = () => {
   }
   list.push(newItem)
   cleanInputs()
+  updateTotals()
   console.log(list);
+}
+
+const updateTotals = () => {
+  let calories = 0, carbs = 0, protein = 0
+  list.map(item => {
+    calories += item.calories,
+      carbs += item.carbs,
+      protein += item.protein
+  })
+
+  $('#totalCalories').text(calories)
+  $('#totalCarbs').text(carbs)
+  $('#totalProtein').text(protein)
 }
 
 const cleanInputs = () => {
