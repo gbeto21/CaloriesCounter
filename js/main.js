@@ -28,6 +28,14 @@ const tag = t => {
   }
 }
 
+const tableRowTag = tag('tr')
+
+// const tableRow = items => tableRowTag(tableCell(items))
+const tableRow = items => compose(tableRowTag, tableCells)(items)
+
+const tableCell = tag('td')
+const tableCells = items => items.map(tableCell).join('')
+
 console.log(tag('h1')('Title'));
 
 let description = $('#description')
