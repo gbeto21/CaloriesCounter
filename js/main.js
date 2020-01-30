@@ -1,69 +1,56 @@
 const compose = (...functions) => data =>
   functions.reduceRight((value, func) => func(value), data)
 
-const addAttrsToString = (obj = {}) => {
+const attrsToString = (obj = {}) => {
   const keys = Object.keys(obj)
   const attrs = []
 
   for (let i = 0; i < keys.length; i++) {
     let attr = keys[i]
-    attrs.push(`${attr}="${obj[attr]}"`)
+    attrs.push(`${attr}=“${obj[attr]}"`)
   }
 
-  const string = attrs.join('')
+  const string = attrs.join(' ')
 
   return string
-
 }
 
-const tagAttrs = obj => (content = "") =>
-  `<${obj.tag}${obj.attrs ? ' ' : ''}${addAttrsToString(obj.attrs)}>${content}</${obj.tag}`
+const tagAttrs = obj => (content = '') =>
+  `<${obj.tag}${obj.attrs ? ' ' : ''}${attrsToString(obj.attrs)}>${content}</${obj.tag}>`
 
 const tag = t => {
   if (typeof t === 'string') {
-    tagAttrs({ tag: t })
+    return tagAttrs({ tag: t })
   }
-  else {
-    tagAttrs(t)
-  }
+  return tagAttrs(t)
 }
 
 const tableRowTag = tag('tr')
-
-// const tableRow = items => tableRowTag(tableCell(items))
 const tableRow = items => compose(tableRowTag, tableCells)(items)
 
 const tableCell = tag('td')
 const tableCells = items => items.map(tableCell).join('')
 
-// console.log(tag('h1')('Title'));
-
 let description = $('#description')
-let carbs = $('#carbs')
 let calories = $('#calories')
+let carbs = $('#carbs')
 let protein = $('#protein')
 
-let list = [
-
-]
+let list = []
 
 description.keypress(() => {
-
   description.removeClass('is-invalid')
 })
 
 calories.keypress(() => {
-
   calories.removeClass('is-invalid')
 })
 
 carbs.keypress(() => {
-
   carbs.removeClass('is-invalid')
 })
 
 protein.keypress(() => {
-
   protein.removeClass('is-invalid')
 })
 
@@ -74,10 +61,12 @@ const validateInputs = () => {
   carbs.val() ? '' : carbs.addClass('is-invalid')
   protein.val() ? '' : protein.addClass('is-invalid')
 
-  if (description.val() && calories.val() && carbs.val() && protein.val()) {
-    add()
-  }
-
+  if (
+    description.val() &&
+    calories.val() &&
+    carbs.val() &&
+    protein.val()
+  ) add()
 }
 
 const add = () => {
@@ -87,14 +76,16 @@ const add = () => {
     carbs: parseInt(carbs.val()),
     protein: parseInt(protein.val())
   }
+
   list.push(newItem)
-  cleanInputs()
   updateTotals()
-  console.log(list);
+  cleanInputs()
+  renderItems()
 }
 
 const updateTotals = () => {
   let calories = 0, carbs = 0, protein = 0
+
   list.map(item => {
     calories += item.calories,
       carbs += item.carbs,
@@ -112,3 +103,12 @@ const cleanInputs = () => {
   carbs.val('')
   protein.val('')
 }
+
+const renderItems = () => {
+  $('tbody').empty()
+
+  list.map(item => {
+    $('tbody').append(tableRow([item.description, item.calories, item.carbs, item.protein]))
+  })
+}
+
